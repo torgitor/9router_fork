@@ -4,12 +4,15 @@ FROM ${NODE_IMAGE} AS base
 WORKDIR /app
 
 FROM base AS builder
-
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk --no-cache upgrade && apk --no-cache add python3 make g++ linux-headers
+
+ENV https_proxy=http://127.0.0.1:20177
+ENV http_proxy=http://127.0.0.1:20177
 
 COPY package.json ./
 RUN --mount=type=cache,target=/root/.npm \
-  npm install
+  npm install --registry http://registry.npmmirror.com
 
 COPY . ./
 ENV NEXT_TELEMETRY_DISABLED=1
