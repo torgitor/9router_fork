@@ -70,7 +70,9 @@ export async function handleChatCore({ body, modelInfo, credentials, log, onCred
 
   const clientRequestedStreaming = body.stream === true || sourceFormat === FORMATS.ANTIGRAVITY || sourceFormat === FORMATS.GEMINI || sourceFormat === FORMATS.GEMINI_CLI;
   const providerRequiresStreaming = PROVIDERS[provider]?.forceStream === true;
-  let stream = providerRequiresStreaming ? true : (body.stream !== false);
+  //When the stream field is absent (undefined) in the request body, vendors and gateways typically handle requests in non-streaming mode. Therefore, the default value for stream should be false.
+  // Modify it to be semantically consistent with line 70.
+  let stream = providerRequiresStreaming ? true : (body.stream === true);
 
   // Image generation models require non-streaming (Google v1internal:generateContent)
   const modelType = getModelType(alias, model);
